@@ -12,19 +12,19 @@ namespace page114
         public double Double { get; set; }
         public string String { get; set; }
 
-        public static int method(int num)
+        public int method(int num)
         {
             int result = num * 2;
             return result;
         }
 
-        public static int method(double num)
+        public int method(double num)
         {
             double result = num / 2;
             return Convert.ToInt32(result);
         }
 
-        public static int method(string num)
+        public int method(string num)
         {
             int result = Convert.ToInt32(num) + 2;
             return result;

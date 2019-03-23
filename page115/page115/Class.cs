@@ -12,8 +12,8 @@ namespace page115
 
         public static int addOne(int num1, int num2 = 0)
         {
-            int result = num1 + 1;
-            int resultO = num2 + 1;
+            int result = num1 + + num2 + 1;
+            
             return result;
         }
     }
