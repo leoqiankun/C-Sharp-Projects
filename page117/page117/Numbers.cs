@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace page117
 {
-    class Numbers
+    public class Numbers
     {
         public int Odd { get; set; }
         public int Even { get; set; }
