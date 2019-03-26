@@ -40,11 +40,22 @@ namespace page140
             Console.ReadLine();
 
             List<Employee> list2 = new List<Employee>();
-            list2 = employees.Where(x => x.FirstName == "Joe");
+            list2 = employees.FindAll(x => x.FirstName == "Joe");
+
+            foreach (Employee employee in list2)
+            {
+                Console.WriteLine(employee.FirstName + " " + employee.LastName + " " + employee.ID);
+            }
+            Console.ReadLine();
 
             List<Employee> list3 = new List<Employee>();
-            list3 = employees.Where(x => x.ID > 5);
+            list3 = employees.FindAll(x => x.ID > 5);
 
+            foreach (Employee employee in list3)
+            {
+                Console.WriteLine(employee.FirstName + " " + employee.LastName + " " + employee.ID);
+            }
+            Console.ReadLine();
         }
     }
 }
