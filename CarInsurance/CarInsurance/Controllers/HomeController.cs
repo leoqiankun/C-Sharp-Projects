@@ -1,4 +1,5 @@
 ﻿using CarInsurance.Models;
+using CarInsurance.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -39,68 +40,105 @@ namespace CarInsurance.Controllers
             if (FullOrLiability == "full coverage" || FullOrLiability == "Full Coverage") { Quote = Quote * 1.5; }
 
 
-            string queryString = @"INSERT INTO GetQuote (FirstName, LastName, EmailAddress, DateOfBirth, CarYear, CarMake, CarModel, DUI, TicketNumber, FullOrLiability, Quote) VALUES
-                                   (@FirstName, @LastName, @EmailAddress, @DateOfBirth, @CarYear, @CarMake, @CarModel, @DUI, @TicketNumber, @FullOrLiability, @Quote)";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (CarInsuranceEntities db = new CarInsuranceEntities())
             {
-                SqlCommand command = new SqlCommand(queryString, connection);
-                command.Parameters.Add("@FirstName", SqlDbType.VarChar);
-                command.Parameters.Add("@LastName", SqlDbType.VarChar);
-                command.Parameters.Add("@EmailAddress", SqlDbType.VarChar);
-                command.Parameters.Add("@DateOfBirth", SqlDbType.DateTime);
-                command.Parameters.Add("@CarYear", SqlDbType.Int);
-                command.Parameters.Add("@CarMake", SqlDbType.VarChar);
-                command.Parameters.Add("@CarModel", SqlDbType.VarChar);
-                command.Parameters.Add("@DUI", SqlDbType.Int);
-                command.Parameters.Add("@TicketNumber", SqlDbType.Int);
-                command.Parameters.Add("@FullOrLiability", SqlDbType.VarChar);
-                command.Parameters.Add("@Quote", SqlDbType.Float);
-
-                command.Parameters["@FirstName"].Value = FirstName;
-                command.Parameters["@LastName"].Value = LastName;
-                command.Parameters["@EmailAddress"].Value = EmailAddress;
-                command.Parameters["@DateOfBirth"].Value = DateOfBirth;
-                command.Parameters["@CarYear"].Value = CarYear;
-                command.Parameters["@CarMake"].Value = CarMake;
-                command.Parameters["@CarModel"].Value = CarModel;
-                command.Parameters["@DUI"].Value = DUI;
-                command.Parameters["@TicketNumber"].Value = TicketNumber;
-                command.Parameters["@FullOrLiability"].Value = FullOrLiability;
-                command.Parameters["@Quote"].Value = Quote;
-
-                connection.Open();
-                command.ExecuteNonQuery();
-                connection.Close();
-            }
-
-                return View("Sucess");
+                var getquote = new GetQuote();
+                getquote.FirstName = FirstName;
+                getquote.LastName = LastName;
+                getquote.EmailAddress = EmailAddress;
+                getquote.DateOfBirth = DateOfBirth;
+                getquote.CarYear = CarYear;
+                getquote.CarMake = CarMake;
+                getquote.CarModel = CarModel;
+                getquote.DUI = DUI;
+                getquote.TicketNumber = TicketNumber;
+                getquote.FullOrLiability = FullOrLiability;
+                getquote.Quote = Quote;
+                db.GetQuotes.Add(getquote);
+                db.SaveChanges();
+                }
+            return View("Sucess");
         }
+            
+            //string queryString = @"INSERT INTO GetQuote (FirstName, LastName, EmailAddress, DateOfBirth, CarYear, CarMake, CarModel, DUI, TicketNumber, FullOrLiability, Quote) VALUES
+            //                       (@FirstName, @LastName, @EmailAddress, @DateOfBirth, @CarYear, @CarMake, @CarModel, @DUI, @TicketNumber, @FullOrLiability, @Quote)";
+
+        //using (SqlConnection connection = new SqlConnection(connectionString))
+        //{
+        //    SqlCommand command = new SqlCommand(queryString, connection);
+        //    command.Parameters.Add("@FirstName", SqlDbType.VarChar);
+        //    command.Parameters.Add("@LastName", SqlDbType.VarChar);
+        //    command.Parameters.Add("@EmailAddress", SqlDbType.VarChar);
+        //    command.Parameters.Add("@DateOfBirth", SqlDbType.DateTime);
+        //    command.Parameters.Add("@CarYear", SqlDbType.Int);
+        //    command.Parameters.Add("@CarMake", SqlDbType.VarChar);
+        //    command.Parameters.Add("@CarModel", SqlDbType.VarChar);
+        //    command.Parameters.Add("@DUI", SqlDbType.Int);
+        //    command.Parameters.Add("@TicketNumber", SqlDbType.Int);
+        //    command.Parameters.Add("@FullOrLiability", SqlDbType.VarChar);
+        //    command.Parameters.Add("@Quote", SqlDbType.Float);
+
+        //    command.Parameters["@FirstName"].Value = FirstName;
+        //    command.Parameters["@LastName"].Value = LastName;
+        //    command.Parameters["@EmailAddress"].Value = EmailAddress;
+        //    command.Parameters["@DateOfBirth"].Value = DateOfBirth;
+        //    command.Parameters["@CarYear"].Value = CarYear;
+        //    command.Parameters["@CarMake"].Value = CarMake;
+        //    command.Parameters["@CarModel"].Value = CarModel;
+        //    command.Parameters["@DUI"].Value = DUI;
+        //    command.Parameters["@TicketNumber"].Value = TicketNumber;
+        //    command.Parameters["@FullOrLiability"].Value = FullOrLiability;
+        //    command.Parameters["@Quote"].Value = Quote;
+
+        //    connection.Open();
+        //    command.ExecuteNonQuery();
+        //    connection.Close();
+        //}
+
+        //return View("Sucess");
+    
 
         public ActionResult Admin()
         {
-            string queryString = @"SELECT Id, FirstName, LastName, EmailAddress, Quote From GetQuote";
-            List<GetQuote> getquotes = new List<GetQuote>();
-
-            using(SqlConnection connection = new SqlConnection(connectionString))
+            using (CarInsuranceEntities db = new CarInsuranceEntities())
             {
-                SqlCommand command = new SqlCommand(queryString, connection);
-                connection.Open();
-                SqlDataReader reader = command.ExecuteReader();
-
-                while (reader.Read())
+                var getquotes = db.GetQuotes;
+                var getquoteVms = new List<GetquoteVm>();
+                foreach (var getquote in getquotes)
                 {
-                    var getquote = new GetQuote();
-                    getquote.Id = Convert.ToInt32(reader["Id"]);
-                    getquote.FirstName = reader["FirstName"].ToString();
-                    getquote.LastName = reader["LastName"].ToString();
-                    getquote.EmailAddress = reader["EmailAddress"].ToString();
-                    getquote.Quote = Convert.ToDouble(reader["Quote"]);
-                    getquotes.Add(getquote);
+                    var getquoteVm = new GetquoteVm();
+                    getquoteVm.FirstName = getquote.FirstName;
+                    getquoteVm.LastName = getquote.LastName;
+                    getquoteVm.EmailAddress = getquote.EmailAddress;
+                    getquoteVm.Quote = Convert.ToDouble(getquote.Quote);
+                    getquoteVms.Add(getquoteVm);
                 }
+                return View(getquoteVms);
             }
+            //string queryString = @"SELECT Id, FirstName, LastName, EmailAddress, Quote From GetQuote";
+            //List<GetQuote> getquotes = new List<GetQuote>();
 
-            return View(getquotes);
+            //using (SqlConnection connection = new SqlConnection(connectionString))
+            //{
+            //    SqlCommand command = new SqlCommand(queryString, connection);
+            //    connection.Open();
+            //    SqlDataReader reader = command.ExecuteReader();
+
+            //    while (reader.Read())
+            //    {
+            //        var getquote = new GetQuote();
+            //        getquote.Id = Convert.ToInt32(reader["Id"]);
+            //        getquote.FirstName = reader["FirstName"].ToString();
+            //        getquote.LastName = reader["LastName"].ToString();
+            //        getquote.EmailAddress = reader["EmailAddress"].ToString();
+            //        getquote.Quote = Convert.ToDouble(reader["Quote"]);
+            //        getquotes.Add(getquote);
+            //    }
+            //}
+
+            
+
+            
         }
         
     }
